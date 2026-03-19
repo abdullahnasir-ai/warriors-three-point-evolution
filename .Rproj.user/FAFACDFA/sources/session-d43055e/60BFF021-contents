@@ -1,0 +1,216 @@
+install.packages("remotes")
+library(prophet)
+remotes::install_github("facebook/prophet", subdir = "R")
+library(prophet)
+team_stats <- read.csv("data/TeamStatistics.csv")
+names(team_stats)
+warriors_stats <- subset(team_stats, teamName == "Warriors")
+nrow(warriors_stats)
+warriors_stats$gameDateTimeEst <- as.Date(warriors_stats$gameDateTimeEst)
+warriors_ts <- data.frame(ds = warriors_stats$gameDateTimeEst, y = warriors_stats$threePointsAttempted)
+head(warriors_ts)
+warriors_ts <- warriors_ts[order(warriors_ts$ds), ]
+warriors_ts <- data.frame(ds = warriors_stats$gameDateTimeEst, y = warriors_stats$threePointsAttempted)
+head(warriors_stats$gameDateTimeEst)
+warriors_ts <- data.frame(ds = warriors_stats$gameDateTimeEst, y = warriors_stats$threePointersAttempted)
+warriors_ts <- warriors_ts[order(warriors_ts$ds), ]
+head(warriors_ts)
+tail(warriors_ts)
+plot(
+warriors_ts$ds,
+warriors_ts$y,
+type = "l",
+xlab = "Date",
+ylab = "3 Point Attempts",
+main = "Golden State Warriors 3 Point Attempts Per Game"
+)
+warriors_ts <- subset(warriors_ts, ds >= as.Date("1979-01-01"))
+head(warriors_ts)
+warriors_ts <- na.omit(warriors_ts)
+head(warriors_ts)
+tail(warriors_ts)
+plot(
+warriors_ts$ds,
+warriors_ts$y,
+type = "l",
+xlab = "Date",
+ylab = "3 Point Attempts",
+main = "Golden State Warriors 3 Point Attempts Per Game"
+)
+warriors_model <- prophet(warriors_ts)
+warriors_future <- make_future_dataframe(warriors_model, periods = 100)
+warriors_forecast <- predict(warriors_model, warriors_future)
+plot(warriors_model, warriors_forecast)
+prophet_plot_components(warriors_model, warriors_forecast)
+prophet_plot_components(warriors_model, warriors_forecast)
+plot(ENSO)
+# This code will display the QMUL logo at the top right of the page
+# Do not change this code
+htmltools::img(src = knitr::image_uri("images/QMlogo.png"),
+alt = 'logo',
+style = 'position:absolute; top:0; right:0; padding:10px; width:20%;')
+# ENSO is a time series related to the
+# El Nino effect weather pattern in the South Pacific
+# run ?astsa::ENSO for more information
+library(astsa)
+start(ENSO)
+end(ENSO)
+frequency(ENSO)
+library(astsa)
+start(ENSO)
+end(ENSO)
+frequency(ENSO)
+plot(ENSO)
+# This code will display the QMUL logo at the top right of the page
+# Do not change this code
+htmltools::img(src = knitr::image_uri("images/QMlogo.png"),
+alt = 'logo',
+style = 'position:absolute; top:0; right:0; padding:10px; width:20%;')
+# This code will display the QMUL logo at the top right of the page
+# Do not change this code
+htmltools::img(src = knitr::image_uri("images/QMlogo.png"),
+alt = 'logo',
+style = 'position:absolute; top:0; right:0; padding:10px; width:20%;')
+# This code will display the QMUL logo at the top right of the page
+# Do not change this code
+htmltools::img(src = knitr::image_uri("images/QMlogo.png"),
+alt = 'logo',
+style = 'position:absolute; top:0; right:0; padding:10px; width:20%;')
+# This code will display the QMUL logo at the top right of the page
+# Do not change this code
+htmltools::img(src = knitr::image_uri("images/QMlogo.png"),
+alt = 'logo',
+style = 'position:absolute; top:0; right:0; padding:10px; width:20%;')
+team_stats <- read.csv("data/TeamStatistics.csv")
+team_stats <- read.csv("data/TeamStatistics.csv")
+team_stats <- read.csv("data/TeamStatistics.csv")
+warriors_stats <- subset(team_stats, teamName == "Warriors")
+warriors_stats$gameDateTimeEst <- as.Date(warriors_stats$gameDateTimeEst)
+warriors_ts <- data.frame(
+ds = warriors_stats$gameDateTimeEst,
+y = warriors_stats$threePointersAttempted
+)
+warriors_ts <- subset(warriors_ts, ds >= as.Date("1979-01-01"))
+warriors_ts <- na.omit(warriors_ts)
+warriors_stats <- subset(team_stats, teamName == "Warriors")
+warriors_stats$gameDateTimeEst <- as.Date(warriors_stats$gameDateTimeEst)
+warriors_ts <- data.frame(ds = warriors_stats$gameDateTimeEst, y = warriors_stats$threePointersAttempted)
+warriors_ts <- subset(warriors_ts, ds >= as.Date("1979-01-01"))
+warriors_ts <- na.omit(warriors_ts)
+team_stats <- read.csv("data/TeamStatistics.csv")
+warriors_stats <- subset(team_stats, teamName == "Warriors")
+warriors_stats$gameDateTimeEst <- as.Date(warriors_stats$gameDateTimeEst)
+warriors_ts <- data.frame(ds = warriors_stats$gameDateTimeEst, y = warriors_stats$threePointersAttempted)
+warriors_ts <- subset(warriors_ts, ds >= as.Date("1979-01-01"))
+warriors_ts <- na.omit(warriors_ts)
+plot(
+warriors_ts$ds,
+warriors_ts$y,
+type = "l",
+xlab = "Date",
+ylab = "3 Point Attempts",
+main = "Golden State Warriors 3 Point Attempts Per Game"
+)
+plot(warriors_ts$ds, warriors_ts$y, type = "l", xlab = "Date", ylab = "Three-Point Attempts", main = "Golden State Warriors Three-Point Attempts Per Game (1979–Present)")
+warriors_stats <- subset(team_stats, teamName == "Warriors")
+warriors_stats$gameDateTimeEst <- as.Date(warriors_stats$gameDateTimeEst)
+warriors_ts <- data.frame(ds = warriors_stats$gameDateTimeEst, y = warriors_stats$threePointersAttempted)
+warriors_ts <- subset(warriors_ts, ds >= as.Date("1979-01-01"))
+warriors_ts <- na.omit(warriors_ts)
+plot(warriors_ts$ds, warriors_ts$y, type = "l", xlab = "Date", ylab = "Three-Point Attempts", main = "Golden State Warriors Three-Point Attempts Per Game (1979–Present)")
+# This code will display the QMUL logo at the top right of the page
+# Do not change this code
+htmltools::img(src = knitr::image_uri("images/QMlogo.png"),
+alt = 'logo',
+style = 'position:absolute; top:0; right:0; padding:10px; width:20%;')
+plot(warriors_ts$ds, warriors_ts$y, type = "l", xlab = "Date", ylab = "Three-Point Attempts", main = "Golden State Warriors Three-Point Attempts Per Game (1979–Present)")
+modern_era <- subset(warriors_ts, ds >= as.Date("2014-01-01"))
+plot(
+modern_era$ds,
+modern_era$y,
+type = "l",
+xlab = "Date",
+ylab = "Three-Point Attempts",
+main = "Warriors Three-Point Attempts Per Game (Modern Era)"
+)
+team_stats <- read.csv("data/TeamStatistics.csv")
+warriors_stats <- subset(team_stats, teamName == "Warriors")
+warriors_stats$gameDateTimeEst <- as.Date(warriors_stats$gameDateTimeEst)
+warriors_ts <- data.frame(ds = warriors_stats$gameDateTimeEst, y = warriors_stats$threePointersAttempted)
+warriors_ts <- subset(warriors_ts, ds >= as.Date("1979-01-01"))
+warriors_ts <- na.omit(warriors_ts)
+plot(warriors_ts$ds, warriors_ts$y, type = "l", xlab = "Date", ylab = "Three-Point Attempts", main = "Golden State Warriors Three-Point Attempts Per Game (1979–Present)")
+modern_era <- subset(warriors_ts, ds >= as.Date("2014-01-01"))
+plot(
+modern_era$ds,
+modern_era$y,
+type = "l",
+xlab = "Date",
+ylab = "Three-Point Attempts",
+main = "Warriors Three-Point Attempts Per Game in the Modern Era"
+)
+season_2019 <- subset(
+warriors_ts,
+ds >= as.Date("2019-10-01") & ds <= as.Date("2020-04-01")
+)
+plot(
+season_2019$ds,
+season_2019$y,
+type = "b",
+xlab = "Date",
+ylab = "Three-Point Attempts",
+main = "Warriors Three-Point Attempts During the 2019–2020 Season"
+)
+season_2019 <- subset(
+warriors_ts,
+ds >= as.Date("2019-10-01") & ds <= as.Date("2020-04-01")
+)
+plot(
+season_2019$ds,
+season_2019$y,
+type = "l",
+xlab = "Date",
+ylab = "Three-Point Attempts",
+main = "Warriors Three-Point Attempts During the 2019–2020 Season"
+)
+warriors_model <- prophet(warriors_ts)
+library(prophet)
+warriors_model <- prophet(warriors_ts)
+future <- make_future_dataframe(warriors_model, periods = 365)
+forecast <- predict(warriors_model, future)
+future <- make_future_dataframe(warriors_model, periods = 365)
+forecast <- predict(warriors_model, future)
+plot(warriors_model, forecast)
+team_stats <- read.csv("data/TeamStatistics.csv")
+warriors_stats <- subset(team_stats, teamName == "Warriors")
+warriors_stats$gameDateTimeEst <- as.Date(warriors_stats$gameDateTimeEst)
+warriors_ts <- data.frame(ds = warriors_stats$gameDateTimeEst, y = warriors_stats$threePointersAttempted)
+warriors_ts <- subset(warriors_ts, ds >= as.Date("1979-01-01"))
+warriors_ts <- na.omit(warriors_ts)
+plot(warriors_ts$ds, warriors_ts$y, type = "l", xlab = "Date", ylab = "Three-Point Attempts", main = "Golden State Warriors Three-Point Attempts Per Game (1979–Present)")
+modern_era <- subset(warriors_ts, ds >= as.Date("2014-01-01"))
+plot(
+modern_era$ds,
+modern_era$y,
+type = "l",
+xlab = "Date",
+ylab = "Three-Point Attempts",
+main = "Warriors Three-Point Attempts Per Game in the Modern Era"
+)
+season_2019 <- subset(
+warriors_ts,
+ds >= as.Date("2019-10-01") & ds <= as.Date("2020-04-01")
+)
+plot(
+season_2019$ds,
+season_2019$y,
+type = "l",
+xlab = "Date",
+ylab = "Three-Point Attempts",
+main = "Warriors Three-Point Attempts During the 2019–2020 Season"
+)
+library(prophet)
+warriors_model <- prophet(warriors_ts)
+future <- make_future_dataframe(warriors_model, periods = 365)
+forecast <- predict(warriors_model, future)
+plot(warriors_model, forecast)

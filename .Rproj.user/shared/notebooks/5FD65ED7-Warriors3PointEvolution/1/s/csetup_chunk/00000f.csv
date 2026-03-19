@@ -1,0 +1,4 @@
+"0","library(prophet)"
+"0","warriors_model <- prophet(warriors_ts)"
+"2","Disabling daily seasonality. Run prophet with daily.seasonality=TRUE to override this.
+"

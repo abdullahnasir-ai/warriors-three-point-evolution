@@ -1,0 +1,296 @@
+---
+title: "The Three Point Evolution of the Golden State Warriors" 
+subtitle: "Coursework 1" 
+author: "Abdullah Nasir" 
+date: "19/03/2026" 
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: spacelab 
+    highlight: tango
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r, echo=FALSE}
+# This code will display the QMUL logo at the top right of the page
+# Do not change this code
+htmltools::img(src = knitr::image_uri("images/QMlogo.png"),
+               alt = 'logo',
+               style = 'position:absolute; top:0; right:0; padding:10px; width:20%;')
+```
+
+# Introduction
+
+Modern basketball has undergone a dramatic transformation over the past
+few decades. One of the clearest examples of this change is the rise of
+the three-point shot, which is now a central part of offensive strategy
+in the NBA and other Basketball leagues.
+
+Few teams represent this evolution better than the Golden State
+Warriors. Over the last decade, the team has helped to redefine modern
+basketball through a style of play built around spacing, ball movement,
+and long-range shooting. The success of players such as Stephen Curry
+accelerated the league-wide shift towards three-point-heavy offences.
+
+This project explores how the number of three-point attempts by the
+Golden State Warriors has changed over time. Using NBA game data, I
+analyse the evolution of the team’s three-point shooting using
+time-series analysis. The data is then modelled using Meta’s Prophet
+forecasting system to identify long-term trends and generate forecasts.
+
+<img src="images/curry_3.avif" width="650"/>
+
+# Dataset
+
+The data used in this project comes from the **NBA Database (1947 –
+Present)** available on **Kaggle**, which contains detailed game-level
+statistics for NBA teams across many seasons.
+
+Each row in the dataset represents the statistics for a team in a single
+NBA game and includes variables such as field goals, rebounds, assists,
+and three-point shooting. Because the dataset spans several decades, it
+allows us to examine long-term changes in playing style.
+
+For this analysis, I focus on the variable `threePointersAttempted`,
+which records the number of three-point shots a team attempts in a game.
+Since the goal of this analysis is to study how the Golden State
+Warriors’ approach to three-point shooting has evolved over time, the
+dataset is filtered to include only games played by the Warriors.
+
+The dataset also includes the game date in the `gameDateTimeEst` column.
+This variable allows the data to be organised as a time series so we can
+analyse trends in three-point shooting across different eras of NBA
+basketball.
+
+```{r}
+team_stats <- read.csv("data/TeamStatistics.csv")
+```
+
+# Preparing the Time Series
+
+To analyse the Warriors’ three-point shooting over time, the dataset
+must first be prepared as a time series.
+
+After preparing the data as a time series, the dataset is filtered to
+include only Golden State Warriors games. The game date variable is then
+converted to a standard date format to serve as the time index for the
+series.
+
+In this project, we use the variable `threePointersAttempted` as the
+time series value.
+
+Because the NBA introduced the three-point line in 1979, the analysis is
+restricted to games played since then. Additionally, data points with
+missing values are removed to ensure the model can be estimated
+correctly.
+
+```{r}
+warriors_stats <- subset(team_stats, teamName == "Warriors")
+
+warriors_stats$gameDateTimeEst <- as.Date(warriors_stats$gameDateTimeEst)
+
+warriors_ts <- data.frame(ds = warriors_stats$gameDateTimeEst, y = warriors_stats$threePointersAttempted)
+
+warriors_ts <- subset(warriors_ts, ds >= as.Date("1979-01-01"))
+
+warriors_ts <- na.omit(warriors_ts)
+```
+
+# Analysis
+
+## Full Time Series Overview
+
+We begin by visualising the full time series of Golden State Warriors
+three-point attempts per game since the introduction of the three-point
+line in 1979. This allows us to observe the overall long-term evolution
+of three-point shooting within the team.
+
+The three-point line was introduced to the NBA in the 1979–1980 season.
+In its early years, teams attempted few shots from beyond the arc.
+During the 1980s and early 1990s, most games featured fewer than ten
+three-point attempts.
+
+Over the decades, attempts steadily increased. This trend reflects a
+broader strategic shift, with teams increasingly valuing the three-point
+shot as an efficient scoring method.
+
+Another notable aspect of the plot is the recurring gaps between groups
+of observations. These represent the NBA off-season, when no
+regular-season games occur. Each group thus indicates a single NBA
+season.
+
+The variation between games is also evident. Some games feature far more
+three-point attempts due to factors such as opposing strategy, game
+tempo, and player availability.
+
+```{r}
+plot(warriors_ts$ds, warriors_ts$y, type = "l", xlab = "Date", ylab = "Three-Point Attempts", main = "Golden State Warriors Three-Point Attempts Per Game (1979–Present)")
+```
+
+## The Modern Era: The Stephan Curry Effect
+
+To better understand how the Warriors helped reshape modern basketball,
+it is useful to zoom in on the more recent period beginning around 2014.
+
+This period marks the rise of Stephen Curry and the Warriors’
+championship teams, built around heavy three-point shooting and floor
+spacing. As a result, during this era, the Warriors became one of the
+league’s most influential teams, contributing to what is often called
+the “three-point revolution.”
+
+In the modern era, the spike in three-point attempts stands out. Many
+games now feature thirty to forty attempts, which was extremely rare in
+earlier decades.
+
+```{r}
+modern_era <- subset(warriors_ts, ds >= as.Date("2014-01-01"))
+
+plot(
+  modern_era$ds,
+  modern_era$y,
+  type = "l",
+  xlab = "Date",
+  ylab = "Three-Point Attempts",
+  main = "Warriors Three-Point Attempts Per Game in the Modern Era"
+)
+```
+
+The time series contains a few outliers. One, in particular, stands out:
+the Warriors attempted 69 three-point shots in a single game.
+
+This extreme value corresponds to a preseason game, which explains why
+it appears slightly separated from the main clusters of regular-season
+data in the time series. Preseason games are often used by teams to
+experiment with tactics and evaluate offensive systems before the
+competitive season begins.
+
+For a team like the Warriors, whose system emphasises spacing and
+perimeter shooting, this environment makes it easier to push those
+strategies to the limit. While 69 attempts is clearly an extreme case,
+it reflects the team's modern offensive philosophy and highlights how
+dramatically three-point usage has evolved compared with earlier eras of
+basketball.
+
+## A Season in Focus
+
+To better understand how shorter-term events can influence the time
+series, it is useful to zoom in on a single NBA season. The 2019–2020
+season provides an interesting case study because the Warriors
+experienced major roster disruption and a long absence for Stephen Curry
+early in the year.
+
+```{r}
+season_2019 <- subset(
+  warriors_ts,
+  ds >= as.Date("2019-10-01") & ds <= as.Date("2020-04-01")
+)
+
+plot(
+  season_2019$ds,
+  season_2019$y,
+  type = "l",
+  xlab = "Date",
+  ylab = "Three-Point Attempts",
+  main = "Warriors Three-Point Attempts During the 2019–2020 Season"
+)
+```
+
+The plot highlights several noticeable changes in three-point attempts
+throughout the season. At the start of the year, the Warriors attempted
+around 35–45 three-point shots per game. This reflects the offensive
+system built around perimeter shooting.
+
+A period of decline appears towards the middle of October, following
+Stephen Curry's injury, which broke his hand and ruled him out for most
+of the season. Without their primary three-point shooter and offensive
+leader, the Warriors’ offensive structure changed significantly, which
+is reflected in the reduced number of three-point attempts over the
+period.
+
+In December, the team faced heavy roster instability, frequently relying
+on younger or less experienced players. As a result, several games had
+noticeably lower attempt totals, including the lowest values shown in
+the plot.
+
+In January, the series stabilises, as the Warriors return to their
+typical 30–40 shots per game. During this period, players such as
+D’Angelo Russell take on a larger offensive role, which increases
+perimeter shot creation.
+
+Finally, the spike at the end of the series occurred shortly before the
+NBA suspended its 2019–2020 season in March 2020 due to the COVID-19
+pandemic. Around this time, Stephen Curry briefly returned from injury,
+and his return led to a short-term increase in offensive production and
+three-point attempts.
+
+Overall, this seasonal zoom shows how injuries, roster changes, and
+external events can influence a sports time series. These factors can
+affect team behaviour over short periods.
+
+# Forecasting Model
+
+To model the time series behaviour and generate future predictions, a
+forecasting model is fitted to the data. For this analysis, the
+**Prophet** model is used. Prophet is a forecasting tool designed for
+time series data and is particularly useful for capturing long-term
+trends and seasonal patterns.
+
+The model is fitted to the Warriors' three-point attempts time series.
+
+```{r setup}
+library(prophet)
+warriors_model <- prophet(warriors_ts)
+```
+
+After fitting the model, future dates are generated and predictions are
+produced for those time points.
+
+```{r}
+future <- make_future_dataframe(warriors_model, periods = 365)
+
+forecast <- predict(warriors_model, future)
+```
+
+The resulting forecast contains predicted values along with uncertainty
+intervals for each future observation. These predictions can then be
+visualised and interpreted in the following section.
+
+# Results & Discussion
+
+After fitting the Prophet model, the forecast can be visualised to
+examine both the historical data and the model’s predicted future
+values.
+
+```{r}
+plot(warriors_model, forecast)
+```
+
+The forecast plot displays historical observations and the model's
+anticipated behaviour. Black points mark observed three-point attempts
+per Warriors game, while the blue line represents the Prophet model's
+estimated trend. The shaded area indicates the uncertainty interval.
+
+The model captures the clear upward trend in three-point attempts over
+time. In recent seasons, the Warriors have frequently attempted 40–50
+three-point shots per game, reflecting the modern NBA’s strong emphasis
+on perimeter shooting.
+
+The forecast indicates this high volume of three-point attempts will
+likely persist in the near future. However, sports data predictions
+require careful interpretation. As shown earlier, factors such as
+injuries, roster changes, and tactical shifts can significantly impact
+team behaviour.
+
+Moreover, much of the Warriors’ offensive strategy has been defined by
+players such as Stephen Curry. If key players retire or teams adopt
+different tactics, the pattern of three-point attempts could shift.
+Therefore, the forecast should be considered an estimate based on
+historical patterns rather than a firm prediction.
+
+Overall, this analysis shows that time-series analysis help track shifts
+in basketball strategy. Analysing the Golden State Warriors’ three-point
+attempts highlights that perimeter shooting is increasingly vital to the
+NBA, but forecasting future changes remains challenging.

@@ -1,0 +1,1 @@
+"0","plot(warriors_ts$ds, warriors_ts$y, type = ""l"", xlab = ""Date"", ylab = ""Three-Point Attempts"", main = ""Golden State Warriors Three-Point Attempts Per Game (1979–Present)"")"
